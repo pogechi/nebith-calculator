@@ -32,7 +32,7 @@ color: #F5F5F5;
 st.markdown(pg_bg, unsafe_allow_html=True)
 st.title("Let's get rid of diesel gensets!")
 st.write("#### At NEBITH, we have developed a solar microgrid that can reduce diesel fuel consumption by up to 85%.")
-st.write("#### Have you rented a diesel genset recently for your operations? Give us a couple of details about it and we'll tell you how much money NEBITH could save you.")
+st.write("#### Have you rented a diesel genset for your operations? Give us a couple of details about it and we'll tell you how much money NEBITH could save you.")
 
 with st.form("nebith_form"):
 
@@ -172,11 +172,17 @@ with st.form("nebith_form"):
 
 # Plot map with location centered
         
+        # yearly_load = Pload.sum()  # kWh
+        # extract LCOE-diesel!
+        # diesel_specific_consumption = 0.27  # l/kWh
+        # yearly_diesel_consumption = yearly_load * diesel_specific_consumption  # l
+        # yearly_diesel_cost = yearly_diesel_consumption * fuel_price  # $
+
         world = gpd.read_file(get_path("naturalearth.land"))
-        ax = world.clip([-12, 35, 40, 63]).plot(figsize=(10, 10), color="#005f73", edgecolor="#94d2bd")
+        ax = world.clip([loc.x[0]-10, loc.y[0]-10, loc.x[0]+10, loc.y[0]+10]).plot(figsize=(20, 10), color="#005f73", edgecolor="#94d2bd")
         geo_df.plot(ax=ax, color="#FFD60A", markersize=100**(geo_df["Mean Irradiance (W/m2)"] + geo_df["Renewable Rate (%)"]))
-        ax.set_xticklabels([])
-        ax.set_yticklabels([])
+        #ax.set_xticklabels([])
+        #ax.set_yticklabels([])
         plt.legend(["LCOE ($/kWh)"],loc="upper left")
 
         for _, row in geo_df.iterrows():
