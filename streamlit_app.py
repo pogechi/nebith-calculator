@@ -182,20 +182,22 @@ if generate:
 
     st.write("#### Your diesel genset performance:")
     col1, col2, col3 = st.columns(3, gap="small")
-    col1.metric("CO2 emissions", "500 ton", delta="ESG", delta_arrow="down")
-    col2.metric("Noise pollution", "85 dB", delta="noisy", delta_color="inverse")
-    col3.metric("VOC compounds", "12,000 ppm", delta="HSE costs", delta_color="inverse")
+    col1.metric("CO2 emissions", "500 ton", delta="ESG", delta_arrow="down", border=True)
+    col2.metric("Noise pollution", "85 dB", delta="noisy", delta_color="inverse", border=True)
+    col3.metric("VOC compounds", "12,000 ppm", delta="HSE costs", delta_color="inverse", border=True)
     
 
     st.write("#### Your costs:")
     col4, col5, col6 = st.columns(3, gap="small")    
-    col4.metric("Yearly expenditure", f"{tco_choice} {currency_input}", delta=None)
-    col5.metric("Yearly fuel costs", f"60% of total", delta=None)
-    col6.metric("Yearly maintenance costs", f"21% of total", delta=None)
+    col4.metric("Yearly expenditure", f"{tco_choice} {currency_input}", delta=None, border=True)
+    col5.metric("Yearly fuel costs", f"60% of total", delta=None, border=True)
+    col6.metric("Yearly maintenance costs", f"21% of total", delta=None, border=True)
         
     st.divider()
 
     with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
-        st.write(f"#### Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
-        st.write(f"#### Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
-        st.write("#### Electrify your fleet and your operations with clean, reliable energy from the sun.")
+        st.write(f"#### 1. Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
+        st.write(f"#### 2. Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
+        st.write("#### 3. Electrify your operations with clean, reliable energy from the sun.")
+
+    download = st.button("Download full report (PDF)")
