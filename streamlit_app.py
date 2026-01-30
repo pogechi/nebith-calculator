@@ -1,13 +1,9 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.patheffects as pe
 import microgrids as mgs
 import pandas as pd
 import geopandas as gpd
-from shapely.geometry import Point
-from geodatasets import get_path
-import contextily as cx
 import pvlib
 import seaborn as sns
 
@@ -164,13 +160,16 @@ with st.form("nebith_form"):
         df_lcoe["Fuel Price"] = [fuel_price]
         df_lcoe["Load Shedding (%)"] = [float(oper_stats.shed_rate)]
         df_lcoe["Renewable Rate (%)"] = [float(oper_stats.renew_rate)]
-        df_lcoe["LCOE (USD/kWh)"] = [round(float(mg_costs.lcoe),4)]        
-
-        loc = gpd.tools.geocode(Location)["geometry"]
-
-        geo_df = gpd.GeoDataFrame(df_lcoe, geometry=[Point(loc.x[0], loc.y[0])])
+        df_lcoe["LCOE (USD/kWh)"] = [round(float(mg_costs.lcoe),4)]
+        df_lcoe["LAT"] = loc.y[0]
+        df_lcoe["LON"] = loc.x[0]
 
 # Plot map with location centered
+        with st.spinner('Generating map...'):
+            st.map(df_lcoe, zoom=4, 
+                latitude=df_lcoe["LAT"], 
+                longitude=df_lcoe["LON"], 
+                color="#FFD60A", size=70000)
         
         # yearly_load = Pload.sum()  # kWh
         # extract LCOE-diesel!
@@ -178,21 +177,5 @@ with st.form("nebith_form"):
         # yearly_diesel_consumption = yearly_load * diesel_specific_consumption  # l
         # yearly_diesel_cost = yearly_diesel_consumption * fuel_price  # $
 
-        world = gpd.read_file(get_path("naturalearth.land"))
-        ax = world.clip([loc.x[0]-10, loc.y[0]-10, loc.x[0]+10, loc.y[0]+10]).plot(figsize=(20, 10), color="#005f73", edgecolor="#94d2bd")
-        geo_df.plot(ax=ax, color="#FFD60A", markersize=100**(geo_df["Mean Irradiance (W/m2)"] + geo_df["Renewable Rate (%)"]))
-        #ax.set_xticklabels([])
-        #ax.set_yticklabels([])
-        plt.legend(["LCOE ($/kWh)"],loc="upper left")
 
-        for _, row in geo_df.iterrows():
-            txt = ax.annotate(
-                f"{row['LCOE (USD/kWh)']:1.2} ",
-                (row.geometry.x, row.geometry.y),
-                fontsize=12,
-#                font=prop.get_name()
-            )
-            txt.set_path_effects([pe.withStroke(linewidth=3, foreground="#F5F5F5")])
-        
-        st.pyplot(ax.get_figure())
 # Show diesel costs
