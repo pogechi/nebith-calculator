@@ -195,8 +195,7 @@ if generate:
 
     st.write("### If you switch to NEBITH's solar microgrid, you could:")
     st.write(f"#### - Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
-    st.write(f"#### - Save up to {round(tco_choice * (100 -
-    float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
+    st.write(f"#### - Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
 
 
 
