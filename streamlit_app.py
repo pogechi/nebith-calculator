@@ -13,6 +13,9 @@ div.stButton > button:first-child {
 background-color: #005F73;
 color: #F5F5F5;
 }
+[data-testid="stSlider"] {
+background-color: #F5F5F5;
+}
 [data-testid="stBaseButton-secondaryFormSubmit"] {
 background-color: #005F73;
 }
