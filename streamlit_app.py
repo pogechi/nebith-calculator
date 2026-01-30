@@ -177,17 +177,15 @@ if generate:
 
     with col1:
         st.write("#### Your diesel genset performance:")
-        st.dataframe(df_lcoe[["Load Shedding (%)", "Renewable Rate (%)", "LCOE (USD/kWh)"]].style.format({
-            "Load Shedding (%)": "{:.2f}",
-            "Renewable Rate (%)": "{:.2f}",
-            "LCOE (USD/kWh)": "{:.4f}"
-        }))
-    
+        st.write("##### 500 ton CO2 emissions")
+        st.write("##### 85 dB noise pollution")
+        st.write("##### 12,000 ppm VOC compounds released")
+
     with col2:
-        st.write("#### Your yearly expenditure:")
-        st.dataframe(pd.DataFrame({
-            "Total Expenditure (fuel + rental + O&M)": [f"{tco_choice} {currency_input}"]
-        }))
+        st.write("#### Your costs:")
+        st.write("##### 23,948 EUR yearly expenditure")
+        st.write("##### 15,000 EUR yearly fuel costs")
+        st.write("##### 5,000 EUR yearly maintenance costs")
     
     st.divider()
 
