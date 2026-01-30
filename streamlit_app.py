@@ -185,7 +185,7 @@ if generate:
         st.write("#### Your costs:")
         st.write("##### 23,948 EUR yearly expenditure")
         st.write("##### 15,000 EUR yearly fuel costs")
-        st.write("##### 5,000 EUR yearly maintenance costs")
+        st.write("##### 5,100 EUR yearly maintenance costs")
     
     st.divider()
 
