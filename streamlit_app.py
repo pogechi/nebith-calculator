@@ -23,11 +23,11 @@ color: #F5F5F5;
 background-color: #0A9396;
 color: #F5F5F5;
 }
-[data-testid="stHorizontalBlock"] {
+[data-testid="stColumn"] {
 background-color: #F5F5F5;
 }
 [data-testid="stExpander"] {
-background-color: #94D2BD;
+background-color: #005F73;
 }
 </style>
 """
@@ -196,5 +196,6 @@ if generate:
     st.divider()
 
     with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
-        st.write(f"#### - Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
-        st.write(f"#### - Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
+        st.write(f"#### Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
+        st.write(f"#### Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
+        st.write("#### Electrify your fleet and your operations with clean, reliable energy from the sun.")
