@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as pe
 import microgrids as mgs
 import pandas as pd
 import geopandas as gpd
