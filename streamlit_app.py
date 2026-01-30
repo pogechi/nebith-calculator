@@ -23,6 +23,12 @@ color: #F5F5F5;
 background-color: #0A9396;
 color: #F5F5F5;
 }
+[data-testid="stHorizontalBlock"] {
+background-color: #F5F5F5;
+}
+[data-testid="stExpander"] {
+background-color: #94D2BD;
+}
 </style>
 """
 st.markdown(pg_bg, unsafe_allow_html=True)
@@ -173,18 +179,16 @@ if generate:
             color="#FFD60A", size=70000)
         
     st.write(f"### Location: {Location}")
-    col1, col2, col3 = st.columns(3, gap="small")
-    col4, col5, col6 = st.columns(3, gap="small")
 
     st.write("#### Your diesel genset performance:")
-    
+    col1, col2, col3 = st.columns(3, gap="small")
     col1.metric("CO2 emissions", "500 ton", delta=None, border=True)
     col2.metric("Noise pollution", "85 dB", delta=None, border=True)
     col3.metric("VOC compounds", "12,000 ppm", delta=None, border=True)
     
 
     st.write("#### Your costs:")
-        
+    col4, col5, col6 = st.columns(3, gap="small")    
     col4.metric("Yearly expenditure", f"{tco_choice} {currency_input}", delta=None, border=True)
     col5.metric("Yearly fuel costs", f"60% of total", delta=None, border=True)
     col6.metric("Yearly maintenance costs", f"21% of total", delta=None, border=True)
