@@ -164,7 +164,7 @@ with st.form("nebith_form"):
         df_microgrid = pd.DataFrame(microgrid_data)
         loc = gpd.tools.geocode(Location)["geometry"]
 
-        geo_df = gpd.GeoDataFrame(df_microgrid, geometry=gpd.points_from_xy([loc.x[0]], [loc.y[0]]))
+        geo_df = gpd.GeoDataFrame(df_microgrid, geometry=[loc.x[0], loc.y[0]])
 
 # Plot map with location centered
         
