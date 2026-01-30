@@ -91,7 +91,7 @@ with st.form("nebith_form"):
                                                     optimalangles=True)
         df = pd.DataFrame(pvgis_data[0])
         irradiance = (df["poa_global"].values / 1000)
-        Pload = pd.read_csv("Construction site load.csv", skiprows=1)
+        Pload = np.loadtxt("Construction site load.csv", skiprows=1)
 
         # Simulate microgrid data
 
