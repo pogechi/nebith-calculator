@@ -173,33 +173,23 @@ if generate:
             color="#FFD60A", size=70000)
         
     st.write(f"### Location: {Location}")
-    col1, col2 = st.columns(2, gap="small")
+    col1, col2, col3 = st.columns(3, gap="small")
+    col4, col5, col6 = st.columns(3, gap="small")
 
-    with col1:
-        st.write("#### Your diesel genset performance:")
-        st.write("##### 500 ton CO2 emissions")
-        st.write("##### 85 dB noise pollution")
-        st.write("##### 12,000 ppm VOC compounds released")
-
-    with col2:
-        st.write("#### Your costs:")
-        st.write("##### 23,948 EUR yearly expenditure")
-        st.write("##### 15,000 EUR yearly fuel costs")
-        st.write("##### 5,100 EUR yearly maintenance costs")
+    st.write("#### Your diesel genset performance:")
     
+    col1.metric("CO2 emissions", "500 ton", delta=None, border=True)
+    col2.metric("Noise pollution", "85 dB", delta=None, border=True)
+    col3.metric("VOC compounds", "12,000 ppm", delta=None, border=True)
+    
+
+    st.write("#### Your costs:")
+        col4.metric("Yearly expenditure", f"{tco_choice} {currency_input}", delta=None, border=True)
+        col5.metric("Yearly fuel costs", f"60% of total", delta=None, border=True)
+        col6.metric("Yearly maintenance costs", f"21% of total", delta=None, border=True)
+        
     st.divider()
 
-    st.write("### If you switch to NEBITH's solar microgrid, you could:")
-    st.write(f"#### - Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
-    st.write(f"#### - Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
-
-
-
-    # yearly_load = Pload.sum()  # kWh
-    # extract LCOE-diesel!
-    # diesel_specific_consumption = 0.27  # l/kWh
-    # yearly_diesel_consumption = yearly_load * diesel_specific_consumption  # l
-    # yearly_diesel_cost = yearly_diesel_consumption * fuel_price  # $
-
-
-# Show diesel costs
+    with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
+        st.write(f"#### - Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
+        st.write(f"#### - Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
