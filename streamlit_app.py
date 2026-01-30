@@ -73,6 +73,7 @@ with st.form("nebith_form"):
     email_input = st.text_input(label="", label_visibility="collapsed", placeholder="jane@doe.com")
 
     generate = st.form_submit_button(label="Generate report")
+
 if generate:
     st.success("Thank you! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
 
@@ -170,7 +171,35 @@ if generate:
             latitude=df_lcoe["LAT"], 
             longitude=df_lcoe["LON"], 
             color="#FFD60A", size=70000)
+        
+    st.write(f"### Location: {Location}")
+    col1, col2 = st.columns(2, gap="small")
+
+    with col1:
+        st.write("#### Your diesel genset performance:")
+        st.dataframe(df_lcoe[["Load Shedding (%)", "Renewable Rate (%)", "LCOE (USD/kWh)"]].style.format({
+            "Load Shedding (%)": "{:.2f}",
+            "Renewable Rate (%)": "{:.2f}",
+            "LCOE (USD/kWh)": "{:.4f}"
+        }))
     
+    with col2:
+        st.write("#### Your yearly expenditure:")
+        st.dataframe(pd.DataFrame({
+            "Total Expenditure (fuel + rental + O&M)": [f"{tco_choice} {currency_input}"]
+        })).style.format({
+            "Total Expenditure (fuel + rental + O&M)": "{:.2f}"
+        })
+    
+    st.divider()
+
+    st.write("### If you switch to NEBITH's solar microgrid, you could:")
+    st.write(f"#### - Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
+    st.write(f"#### - Save up to {round(tco_choice * (100 -
+    float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
+
+
+
     # yearly_load = Pload.sum()  # kWh
     # extract LCOE-diesel!
     # diesel_specific_consumption = 0.27  # l/kWh
