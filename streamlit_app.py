@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import microgrids as mgs
 import pandas as pd
 import geopandas as gpd
+from shapely.geometry import Point
 from geodatasets import get_path
 import contextily as cx
 import pvlib
