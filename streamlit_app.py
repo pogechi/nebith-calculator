@@ -73,109 +73,109 @@ with st.form("nebith_form"):
     email_input = st.text_input(label="", label_visibility="collapsed", placeholder="jane@doe.com")
 
     generate = st.form_submit_button(label="Generate report")
-    if generate:
-        st.success("Thank you! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
+if generate:
+    st.success("Thank you! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
 
-        # Locate city
+    # Locate city
 
-        # Location = "Monza, Italy"
-        Location = f"{city_input}, {country_input}"
-        loc = gpd.tools.geocode(Location)["geometry"]
+    # Location = "Monza, Italy"
+    Location = f"{city_input}, {country_input}"
+    loc = gpd.tools.geocode(Location)["geometry"]
 
-        pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=float(loc.y[0]), 
-                                                    longitude=float(loc.x[0]), 
-                                                    start=2023, end=2023, 
-                                                    components=False, 
-                                                    optimalangles=True)
-        df = pd.DataFrame(pvgis_data[0])
-        irradiance = (df["poa_global"].values / 1000)
-        Pload = np.loadtxt("Construction site load.csv", skiprows=1)
+    pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=float(loc.y[0]), 
+                                                longitude=float(loc.x[0]), 
+                                                start=2023, end=2023, 
+                                                components=False, 
+                                                optimalangles=True)
+    df = pd.DataFrame(pvgis_data[0])
+    irradiance = (df["poa_global"].values / 1000)
+    Pload = np.loadtxt("Construction site load.csv", skiprows=1)
 
-        # Simulate microgrid data
+    # Simulate microgrid data
 
-        lifetime = 25 # yr
-        discount_rate = 0.05
-        timestep = 1 # h
-        investment_price_pv = 600 # initial investiment price ($/kW)
-        energy_rated_sto = 1000 # rated energy capacity (kWh)
-        investment_price_sto = 250 # initial investiment price ($/kWh)
-        fuel_price = 2 # fuel price ($/l)
+    lifetime = 25 # yr
+    discount_rate = 0.05
+    timestep = 1 # h
+    investment_price_pv = 600 # initial investiment price ($/kW)
+    energy_rated_sto = 1000 # rated energy capacity (kWh)
+    investment_price_sto = 250 # initial investiment price ($/kWh)
+    fuel_price = 2 # fuel price ($/l)
 
-        project = mgs.Project(lifetime, discount_rate, timestep)
+    project = mgs.Project(lifetime, discount_rate, timestep)
 
-        power_rated_gen = 500.  # /2 to see some load shedding
-        fuel_intercept = 0.0 # fuel curve intercept (l/h/kW_max)
-        fuel_slope = 0.240 # fuel curve slope (l/h/kW)
-        investment_price_gen = 400. # initial investiment price ($/kW)
-        om_price_gen = 0.02 # operation & maintenance price ($/kW/h of operation)
-        lifetime_gen = 15000. # generator lifetime (h)
+    power_rated_gen = 500.  # /2 to see some load shedding
+    fuel_intercept = 0.0 # fuel curve intercept (l/h/kW_max)
+    fuel_slope = 0.240 # fuel curve slope (l/h/kW)
+    investment_price_gen = 400. # initial investiment price ($/kW)
+    om_price_gen = 0.02 # operation & maintenance price ($/kW/h of operation)
+    lifetime_gen = 15000. # generator lifetime (h)
 
-        generator = mgs.DispatchableGenerator(power_rated_gen,
-            fuel_intercept, fuel_slope, fuel_price,
-            investment_price_gen, om_price_gen,
-            lifetime_gen
-        )
+    generator = mgs.DispatchableGenerator(power_rated_gen,
+        fuel_intercept, fuel_slope, fuel_price,
+        investment_price_gen, om_price_gen,
+        lifetime_gen
+    )
 
-        om_price_sto = 10. # operation and maintenance price ($/kWh/y)
-        lifetime_sto = 15. # calendar lifetime (y)
-        lifetime_cycles = 6000 # maximum number of cycles over life (1)
-        # Parameters with default values
-        charge_rate_max = 1.0 # max charge power for 1 kWh (kW/kWh = h^-1)
-        discharge_rate_max = 1.0 # max discharge power for 1 kWh (kW/kWh = h^-1)
-        loss_factor_sto = 0.05 # linear loss factor α (round-trip efficiency is about 1 − 2α) ∈ [0,1]
+    om_price_sto = 10. # operation and maintenance price ($/kWh/y)
+    lifetime_sto = 15. # calendar lifetime (y)
+    lifetime_cycles = 6000 # maximum number of cycles over life (1)
+    # Parameters with default values
+    charge_rate_max = 1.0 # max charge power for 1 kWh (kW/kWh = h^-1)
+    discharge_rate_max = 1.0 # max discharge power for 1 kWh (kW/kWh = h^-1)
+    loss_factor_sto = 0.05 # linear loss factor α (round-trip efficiency is about 1 − 2α) ∈ [0,1]
 
-        battery = mgs.Battery(energy_rated_sto,
-            investment_price_sto, om_price_sto,
-            lifetime_sto, lifetime_cycles,
-            charge_rate_max, discharge_rate_max,
-            loss_factor_sto,SoC_ini=1)
+    battery = mgs.Battery(energy_rated_sto,
+        investment_price_sto, om_price_sto,
+        lifetime_sto, lifetime_cycles,
+        charge_rate_max, discharge_rate_max,
+        loss_factor_sto,SoC_ini=1)
 
-        power_rated_pv = 350. # rated power (kW)
-        om_price_pv = 20.# operation and maintenance price ($/kW)
-        lifetime_pv = 25. # lifetime (y)
-        # Parameters with default values
-        derating_factor_pv = 1.0 # derating factor (or performance ratio) ∈ [0,1]"
+    power_rated_pv = 350. # rated power (kW)
+    om_price_pv = 20.# operation and maintenance price ($/kW)
+    lifetime_pv = 25. # lifetime (y)
+    # Parameters with default values
+    derating_factor_pv = 1.0 # derating factor (or performance ratio) ∈ [0,1]"
 
-        photovoltaic = mgs.Photovoltaic(power_rated_pv, irradiance,
-            investment_price_pv, om_price_pv,
-            lifetime_pv, derating_factor_pv)
+    photovoltaic = mgs.Photovoltaic(power_rated_pv, irradiance,
+        investment_price_pv, om_price_pv,
+        lifetime_pv, derating_factor_pv)
 
-        microgrid = mgs.Microgrid(project, Pload,
-            generator, battery,
-            {'Solar PV': photovoltaic}
-        )
+    microgrid = mgs.Microgrid(project, Pload,
+        generator, battery,
+        {'Solar PV': photovoltaic}
+    )
 
-        oper_traj = mgs.TrajRecorder()
-        oper_stats = mgs.sim_operation(microgrid, oper_traj)
+    oper_traj = mgs.TrajRecorder()
+    oper_stats = mgs.sim_operation(microgrid, oper_traj)
 
-        mg_costs = mgs.sim_economics(microgrid, oper_stats)
+    mg_costs = mgs.sim_economics(microgrid, oper_stats)
 
-        df_lcoe = pd.DataFrame()
-        df_lcoe["City"] = Location
-        df_lcoe["Max Irradiance (W/m2)"] = [irradiance.max()]
-        df_lcoe["Mean Irradiance (W/m2)"] = [irradiance.mean()]
-        df_lcoe["PV Price (USD/kW)"] = [investment_price_pv]
-        df_lcoe["BESS Price (USD/kWh)"] = [investment_price_sto]
-        df_lcoe["BESS Size (kWh)"] = [energy_rated_sto]
-        df_lcoe["Fuel Price"] = [fuel_price]
-        df_lcoe["Load Shedding (%)"] = [float(oper_stats.shed_rate)]
-        df_lcoe["Renewable Rate (%)"] = [float(oper_stats.renew_rate)]
-        df_lcoe["LCOE (USD/kWh)"] = [round(float(mg_costs.lcoe),4)]
-        df_lcoe["LAT"] = loc.y[0]
-        df_lcoe["LON"] = loc.x[0]
+    df_lcoe = pd.DataFrame()
+    df_lcoe["City"] = Location
+    df_lcoe["Max Irradiance (W/m2)"] = [irradiance.max()]
+    df_lcoe["Mean Irradiance (W/m2)"] = [irradiance.mean()]
+    df_lcoe["PV Price (USD/kW)"] = [investment_price_pv]
+    df_lcoe["BESS Price (USD/kWh)"] = [investment_price_sto]
+    df_lcoe["BESS Size (kWh)"] = [energy_rated_sto]
+    df_lcoe["Fuel Price"] = [fuel_price]
+    df_lcoe["Load Shedding (%)"] = [float(oper_stats.shed_rate)]
+    df_lcoe["Renewable Rate (%)"] = [float(oper_stats.renew_rate)]
+    df_lcoe["LCOE (USD/kWh)"] = [round(float(mg_costs.lcoe),4)]
+    df_lcoe["LAT"] = loc.y[0]
+    df_lcoe["LON"] = loc.x[0]
 
 # Plot map with location centered
-        with st.spinner('Generating map...'):
-            st.map(df_lcoe, zoom=4, 
-                latitude=df_lcoe["LAT"], 
-                longitude=df_lcoe["LON"], 
-                color="#FFD60A", size=70000)
-        
-        # yearly_load = Pload.sum()  # kWh
-        # extract LCOE-diesel!
-        # diesel_specific_consumption = 0.27  # l/kWh
-        # yearly_diesel_consumption = yearly_load * diesel_specific_consumption  # l
-        # yearly_diesel_cost = yearly_diesel_consumption * fuel_price  # $
+    with st.spinner('Generating map...'):
+        st.map(df_lcoe, zoom=4, 
+            latitude=df_lcoe["LAT"], 
+            longitude=df_lcoe["LON"], 
+            color="#FFD60A", size=70000)
+    
+    # yearly_load = Pload.sum()  # kWh
+    # extract LCOE-diesel!
+    # diesel_specific_consumption = 0.27  # l/kWh
+    # yearly_diesel_consumption = yearly_load * diesel_specific_consumption  # l
+    # yearly_diesel_cost = yearly_diesel_consumption * fuel_price  # $
 
 
 # Show diesel costs
