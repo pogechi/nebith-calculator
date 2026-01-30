@@ -152,19 +152,21 @@ with st.form("nebith_form"):
 
         mg_costs = mgs.sim_economics(microgrid, oper_stats)
 
-        microgrid_data = {
-            "Load" : microgrid.load,
-            "PVgen" : oper_traj.Prep - oper_traj.Pspill,
-            "Spill" : oper_traj.Pspill,
-            "BESS" : oper_traj.Esto[:-1],
-            "Diesel" : oper_traj.Pgen,
-            "Irradiance" : irradiance
-        }
+        df_lcoe = pd.DataFrame()
+        df_lcoe["City"] = Location
+        df_lcoe["Max Irradiance (W/m2)"] = [irradiance.max()]
+        df_lcoe["Mean Irradiance (W/m2)"] = [irradiance.mean()]
+        df_lcoe["PV Price (USD/kW)"] = [investment_price_pv]
+        df_lcoe["BESS Price (USD/kWh)"] = [investment_price_sto]
+        df_lcoe["BESS Size (kWh)"] = [energy_rated_sto]
+        df_lcoe["Fuel Price"] = [fuel_price]
+        df_lcoe["Load Shedding (%)"] = [float(oper_stats.shed_rate)]
+        df_lcoe["Renewable Rate (%)"] = [float(oper_stats.renew_rate)]
+        df_lcoe["LCOE (USD/kWh)"] = [round(float(mg_costs.lcoe),4)]        
 
-        df_microgrid = pd.DataFrame(microgrid_data)
         loc = gpd.tools.geocode(Location)["geometry"]
 
-        geo_df = gpd.GeoDataFrame(df_microgrid, geometry=[loc.x[0], loc.y[0]])
+        geo_df = gpd.GeoDataFrame(df_lcoe, geometry=[Point(loc.x[0], loc.y[0])])
 
 # Plot map with location centered
         
