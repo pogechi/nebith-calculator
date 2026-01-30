@@ -187,9 +187,7 @@ if generate:
         st.write("#### Your yearly expenditure:")
         st.dataframe(pd.DataFrame({
             "Total Expenditure (fuel + rental + O&M)": [f"{tco_choice} {currency_input}"]
-        })).style.format({
-            "Total Expenditure (fuel + rental + O&M)": "{:.2f}"
-        })
+        }))
     
     st.divider()
 
