@@ -187,4 +187,6 @@ with st.form("nebith_form"):
 #                font=prop.get_name()
             )
             txt.set_path_effects([pe.withStroke(linewidth=3, foreground="#F5F5F5")])
+        
+        plt.show()
 # Show diesel costs
