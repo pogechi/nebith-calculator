@@ -62,7 +62,8 @@ with st.form("nebith_form"):
     country_input = st.selectbox(label="Country", options=country, index=None, placeholder="Select a country...")
 
     st.write("##### 3. How big is your diesel genset?")
-    genset_size = st.slider(label="Genset rated power (kW)", min_value=5, max_value=2000, value=500, step=50)
+    slider_opts = [5, 10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000]
+    genset_size = st.select_slider(label="Genset rated power (kW)", options=slider_opts, value=500)
     currency_input = st.selectbox(label="Currency", options= ["USD", "GBP", "EUR"])
 
     st.write("#### We're almost there, now share your name and e-mail address with us, so we can send you the current report as a PDF file.")
