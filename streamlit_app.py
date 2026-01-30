@@ -184,9 +184,10 @@ if generate:
     
 
     st.write("#### Your costs:")
-        col4.metric("Yearly expenditure", f"{tco_choice} {currency_input}", delta=None, border=True)
-        col5.metric("Yearly fuel costs", f"60% of total", delta=None, border=True)
-        col6.metric("Yearly maintenance costs", f"21% of total", delta=None, border=True)
+        
+    col4.metric("Yearly expenditure", f"{tco_choice} {currency_input}", delta=None, border=True)
+    col5.metric("Yearly fuel costs", f"60% of total", delta=None, border=True)
+    col6.metric("Yearly maintenance costs", f"21% of total", delta=None, border=True)
         
     st.divider()
 
