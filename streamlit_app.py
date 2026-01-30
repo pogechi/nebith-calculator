@@ -23,10 +23,10 @@ st.write("#### Have you rented a diesel genset recently for your operations? Giv
 st.write("##### 1. What business are you in?")
 
 industry = ["Construction", "Mining", "Data Centers", "Agriculture", "Other"]
-st.selectbox(label="Industry", options=industry)
+industry_input = st.selectbox(label="Industry", options=industry, index=None, placeholder="Select an industry...")
 
 st.write("##### 2. Where is your project located?")
-st.text_input(label="City")
+city_input = st.text_input(label="City")
 country = ["Afghanistan",    "Albania",    "Algeria",    "Andorra",    "Angola",    "Antigua and Barbuda",    "Argentina",    "Armenia",    "Australia",    "Austria",    "Azerbaijan",    "Bahamas",    "Bahrain",    "Bangladesh",
     "Barbados",    "Belarus",    "Belgium",    "Belize",    "Benin",    "Bhutan",    "Bolivia",    "Bosnia and Herzegovina",    "Botswana",    "Brazil",    "Brunei",    "Bulgaria",    "Burkina Faso",    "Burundi",
     "Cambodia",    "Cameroon",    "Canada",    "Cape Verde",    "Central African Republic",   "Chad",    "Chile",    "China",    "Colombia",    "Comoros",    "Congo",    "Costa Rica",    "Croatia",    "Cuba",
@@ -41,15 +41,26 @@ country = ["Afghanistan",    "Albania",    "Algeria",    "Andorra",    "Angola",
     "Slovakia",    "Slovenia",    "Solomon Islands",    "Somalia",    "South Africa",    "South Sudan",    "Spain",    "Sri Lanka",    "Sudan",    "Suriname",    "Sweden",    "Switzerland",    "Syria",    "Taiwan",
     "Tajikistan",    "Tanzania",    "Thailand",    "Togo",    "Tonga",    "Trinidad and Tobago",    "Tunisia",    "Turkey",    "Turkmenistan",    "Tuvalu",    "Uganda",    "Ukraine",    "United Arab Emirates",    "United Kingdom",    "United States",
     "Uruguay",    "Uzbekistan",    "Vanuatu",    "Vatican City",    "Venezuela",    "Vietnam",    "Yemen",    "Zambia",    "Zimbabwe"]
-st.selectbox(label="Country", options=country)
+country_input = st.selectbox(label="Country", options=country, index=None, placeholder="Select a country...")
 
 st.write("##### 3. How much did you spend last year on your diesel genset?")
-st.number_input(label="Total expenditure (fuel + rental + O&M)",
+tco_choice = st.number_input(label="Total expenditure (fuel + rental + O&M)",
                 step=100)
-st.selectbox(label="Currency", options= ["USD", "GBP", "EUR"])
+currency_input = st.selectbox(label="Currency", options= ["USD", "GBP", "EUR"])
+
 # st.write("##### 3. Upload a yearly power profile for your project, if you have one. If not, please select our sample power profile.")
 # st.file_uploader(label="Upload a .csv file (8760 rows, hourly power in kW)", type=".csv")
 # st.button(label="Use our own sample data")
+
+st.write("#### We're almost there, now give us your name and e-mail address, so we can send you the current report as a PDF file.")
+
+st.write("##### 4. Full name")
+name_input = st.text_input(label="First name, Last name")
+
+st.write("##### 5. E-mail address")
+email_input = st.text_input(label="", label_visibility="collapsed", placeholder="jane@doe.com")
+
+st.button(label="Generate report")
 
 # Simulate microgrid data
 # Plot map with location centered
