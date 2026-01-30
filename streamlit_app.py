@@ -61,14 +61,9 @@ with st.form("nebith_form"):
         "Uruguay",    "Uzbekistan",    "Vanuatu",    "Vatican City",    "Venezuela",    "Vietnam",    "Yemen",    "Zambia",    "Zimbabwe"]
     country_input = st.selectbox(label="Country", options=country, index=None, placeholder="Select a country...")
 
-    st.write("##### 3. How much did you spend last year on your diesel genset?")
-    tco_choice = st.number_input(label="Total expenditure (fuel + rental + O&M)",
-                    step=100)
+    st.write("##### 3. How big is your diesel genset?")
+    genset_size = st.slider(label="Genset rated power (kW)", min_value=5, max_value=2000, value=500, step=50)
     currency_input = st.selectbox(label="Currency", options= ["USD", "GBP", "EUR"])
-
-    # st.write("##### 3. Upload a yearly power profile for your project, if you have one. If not, please select our sample power profile.")
-    # st.file_uploader(label="Upload a .csv file (8760 rows, hourly power in kW)", type=".csv")
-    # st.button(label="Use our own sample data")
 
     st.write("#### We're almost there, now share your name and e-mail address with us, so we can send you the current report as a PDF file.")
 
@@ -182,14 +177,14 @@ if generate:
 
     st.write("#### Your diesel genset performance:")
     col1, col2, col3 = st.columns(3, gap="small")
-    col1.metric("CO2 emissions", "500 ton", delta="ESG", delta_arrow="down", border=True)
-    col2.metric("Noise pollution", "85 dB", delta="noisy", delta_color="inverse", border=True)
-    col3.metric("VOC compounds", "12,000 ppm", delta="HSE costs", delta_color="inverse", border=True)
+    col1.metric("CO2 emissions", "500 ton", delta="ESG", delta_arrow="down", delta_color="red", border=True)
+    col2.metric("Noise pollution", "85 dB", delta="noisy", delta_color="red", border=True)
+    col3.metric("VOC compounds", "12,000 ppm", delta="HSE costs", delta_color="red", border=True)
     
 
     st.write("#### Your costs:")
     col4, col5, col6 = st.columns(3, gap="small")    
-    col4.metric("Yearly expenditure", f"{tco_choice} {currency_input}", delta=None, border=True)
+    col4.metric("Yearly expenditure", f"{genset_size} * 500 {currency_input}", delta=None, border=True)
     col5.metric("Yearly fuel costs", f"60% of total", delta=None, border=True)
     col6.metric("Yearly maintenance costs", f"21% of total", delta=None, border=True)
         
@@ -197,9 +192,9 @@ if generate:
 
     with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
         st.write(f"#### 1. Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
-        st.write(f"#### 2. Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
-        st.write("#### 3. Electrify your operations with clean, reliable energy from the sun.")
+        st.write(f"#### 2. Save up to {round(genset_size * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
+        st.write("#### 3. Electrify your operations with clean, reliable energy.")
 
     st.divider()
 
-    download = st.button("Download full report (PDF)", location="center")
+    download = st.download_button("Download full report (PDF)", data="dummy_pdf_content", file_name="nebith_report.pdf", mime="application/pdf")
