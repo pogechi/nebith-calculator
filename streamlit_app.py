@@ -23,7 +23,7 @@ color: #F5F5F5;
 background-color: #0A9396;
 color: #F5F5F5;
 }
-[data-testid="stColumn"] {
+[data-testid="stMetric"] {
 background-color: #F5F5F5;
 }
 [data-testid="stExpander"] {
@@ -200,4 +200,6 @@ if generate:
         st.write(f"#### 2. Save up to {round(tco_choice * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
         st.write("#### 3. Electrify your operations with clean, reliable energy from the sun.")
 
-    download = st.button("Download full report (PDF)")
+    st.divider()
+
+    download = st.button("Download full report (PDF)", location="center")
