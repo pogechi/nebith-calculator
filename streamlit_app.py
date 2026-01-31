@@ -194,7 +194,7 @@ if generate:
             longitude=df_lcoe["LON"], 
             color="#FFD60A", size=70000)
         
-    st.write(f"### Location: {Location} - {round(df_lcoe["LAT"],5)}, {round(df_lcoe["LON"],5)}")
+    st.write(f"### Location: {Location} - {round(loc.y[0],5)}, {round(loc.x[0],5)}")
 
     st.write("#### Your diesel genset performance:")
     col1, col2, col3 = st.columns(3, gap="small")
