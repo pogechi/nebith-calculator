@@ -86,7 +86,7 @@ with st.form("nebith_form"):
 
     st.divider()
 
-    st.write("#### We're almost there, now share your name and e-mail address with us to receive the current report as a PDF file.")
+    st.write("#### We're almost there, now share your name and e-mail address to receive our report as a PDF file.")
 
     st.write("##### 4. Full name")
     name_input = st.text_input(label="First name, Last name", placeholder="Jane Doe")
