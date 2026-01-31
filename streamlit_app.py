@@ -50,7 +50,7 @@ color: #F5F5F5;
 st.markdown(pg_bg, unsafe_allow_html=True)
 st.title("Let's get rid of diesel gensets!")
 st.write("#### At NEBITH, we have developed a solar microgrid that can reduce diesel fuel consumption by up to 85%.")
-st.write("#### Have you rented a diesel genset for your operations? Give us a couple of details about it and we'll tell you how much money NEBITH could save you.")
+st.write("#### Have you rented a diesel genset for your operations? Share your story and we'll tell you how much money NEBITH could save you.")
 
 with st.form("nebith_form"):
 
@@ -126,6 +126,8 @@ if generate:
 
     project = mgs.Project(lifetime, discount_rate, timestep)
 
+    # Diesel genset
+
     power_rated_gen = 500.  # /2 to see some load shedding
     fuel_intercept = 0.0 # fuel curve intercept (l/h/kW_max)
     fuel_slope = 0.240 # fuel curve slope (l/h/kW)
@@ -136,8 +138,9 @@ if generate:
     generator = mgs.DispatchableGenerator(power_rated_gen,
         fuel_intercept, fuel_slope, fuel_price,
         investment_price_gen, om_price_gen,
-        lifetime_gen
-    )
+        lifetime_gen)
+
+    # Battery energy storage system
 
     om_price_sto = 10. # operation and maintenance price ($/kWh/y)
     lifetime_sto = 15. # calendar lifetime (y)
@@ -153,6 +156,8 @@ if generate:
         charge_rate_max, discharge_rate_max,
         loss_factor_sto,SoC_ini=1)
 
+    # Photovoltaic system
+
     power_rated_pv = 350. # rated power (kW)
     om_price_pv = 20.# operation and maintenance price ($/kW)
     lifetime_pv = 25. # lifetime (y)
@@ -165,8 +170,7 @@ if generate:
 
     microgrid = mgs.Microgrid(project, Pload,
         generator, battery,
-        {'Solar PV': photovoltaic}
-    )
+        {'Solar PV': photovoltaic})
 
     oper_traj = mgs.TrajRecorder()
     oper_stats = mgs.sim_operation(microgrid, oper_traj)
@@ -187,6 +191,58 @@ if generate:
     df_lcoe["LAT"] = loc.y[0]
     df_lcoe["LON"] = loc.x[0]
 
+# Calculate diesel data
+
+    d_investment_price_pv = 600 # initial investiment price ($/kW)
+    d_energy_rated_sto = 1000 # rated energy capacity (kWh)
+    d_investment_price_sto = 250 # initial investiment price ($/kWh)
+    d_fuel_price = 2 # fuel price ($/l)
+    d_power_rated_pv = 350. # rated power (kW)
+
+    d_generator = mgs.DispatchableGenerator(power_rated_gen,
+        fuel_intercept, fuel_slope, d_fuel_price,
+        investment_price_gen, om_price_gen,
+        lifetime_gen)
+    
+    d_battery = mgs.Battery(d_energy_rated_sto,
+        d_investment_price_sto, om_price_sto,
+        lifetime_sto, lifetime_cycles,
+        charge_rate_max, discharge_rate_max,
+        loss_factor_sto,SoC_ini=1)
+    
+    d_photovoltaic = mgs.Photovoltaic(d_power_rated_pv, irradiance,
+        d_investment_price_pv, om_price_pv,
+        lifetime_pv, derating_factor_pv)
+    
+    d_microgrid = mgs.Microgrid(project, Pload,
+        d_generator, d_battery,
+        {'Solar PV': d_photovoltaic})
+
+    d_oper_traj = mgs.TrajRecorder()
+    d_oper_stats = mgs.sim_operation(d_microgrid, d_oper_traj)
+    d_mg_costs = mgs.sim_economics(d_microgrid, d_oper_stats)    
+
+    d_df_lcoe = pd.DataFrame()
+    d_df_lcoe["City"] = Location
+    d_df_lcoe["Fuel Price"] = [d_fuel_price]
+    d_df_lcoe["Renewable Rate (%)"] = [float(d_oper_stats.renew_rate)]
+    d_df_lcoe["LCOE (USD/kWh)"] = [round(float(d_mg_costs.lcoe),4)]
+
+    ratio = genset_size / power_rated_gen
+
+    yearly_load = ratio * Pload.sum() # kWh
+    yearly_fuel_consumption = ratio * (d_oper_stats.fuel_consumed.sum()) # l
+    yearly_fuel_costs = ratio * yearly_fuel_consumption * d_fuel_price
+    yearly_om_costs = ratio * d_mg_costs.om_costs
+    yearly_total_costs = ratio * d_mg_costs.total_costs
+    yearly_co2_emissions = yearly_fuel_consumption * 2.68 / 1000 # ton
+    yearly_voc_compounds = yearly_fuel_consumption * 24 / 1000 # ppm
+    diesel_genset_noise = 75 + 10 * np.log10(ratio * power_rated_gen)  # dB
+
+# Currency exchange
+
+    exch_rates = {"USD": 1, "GBP": 0.81, "EUR": 0.91}
+
 # Plot map with location centered
     with st.spinner('Generating map...'):
         st.map(df_lcoe, zoom=4, 
@@ -198,22 +254,22 @@ if generate:
 
     st.write("#### Your diesel genset performance:")
     col1, col2, col3 = st.columns(3, gap="small")
-    col1.metric("CO2 emissions", "500 ton", delta="ESG", delta_arrow="down", delta_color="red", border=True)
-    col2.metric("Noise pollution", "85 dB", delta="noisy", delta_color="red", border=True)
-    col3.metric("VOC compounds", "12,000 ppm", delta="HSE costs", delta_color="red", border=True)
+    col1.metric("CO2 emissions", f"{yearly_co2_emissions:.2f} ton", delta="ESG", delta_arrow="down", delta_color="red", border=True)
+    col2.metric("Noise pollution", f"{diesel_genset_noise:.2f} dB", delta="noisy", delta_color="red", border=True)
+    col3.metric("VOC compounds", f"{yearly_voc_compounds:.2f} ppm", delta="HSE costs", delta_color="red", border=True)
     
 
     st.write("#### Your costs:")
     col4, col5, col6 = st.columns(3, gap="small")    
-    col4.metric("Yearly expenditure", f"{genset_size} * 500 {currency_input}", delta=None, border=True)
-    col5.metric("Yearly fuel costs", f"60% of total", delta=None, border=True)
-    col6.metric("Yearly maintenance costs", f"21% of total", delta=None, border=True)
+    col4.metric("Yearly expenditure", f"{exch_rates[currency_input] * yearly_total_costs:.2f} {currency_input}", delta=None, border=True)
+    col5.metric("Yearly fuel costs", f"{exch_rates[currency_input] * yearly_fuel_costs:.2f} {currency_input}", delta=None, border=True)
+    col6.metric("Yearly maintenance costs", f"{exch_rates[currency_input] * yearly_om_costs:.2f} {currency_input}", delta=None, border=True)
         
     st.divider()
 
     with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
-        st.write(f"#### 1. Reduce your diesel fuel consumption by up to {100 - round(float(oper_stats.renew_rate),2)}%")
-        st.write(f"#### 2. Save up to {round(genset_size * (100 - float(oper_stats.renew_rate)) / 100, 2)} {currency_input} every year!")
+        st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2)}%!")
+        st.write(f"#### 2. Save up to {exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load):.2f} {currency_input} every year!")
         st.write("#### 3. Electrify your operations with clean, reliable energy.")
 
     st.divider()
