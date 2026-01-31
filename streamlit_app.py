@@ -41,6 +41,10 @@ background-color: #F5F5F5;
 [data-testid="stExpander"] {
 background-color: #005F73;
 }
+[data-testid="stDownloadButton"] {
+background-color: #005F73;
+color: #F5F5F5;
+}
 </style>
 """
 st.markdown(pg_bg, unsafe_allow_html=True)
@@ -190,7 +194,7 @@ if generate:
             longitude=df_lcoe["LON"], 
             color="#FFD60A", size=70000)
         
-    st.write(f"### Location: {Location}")
+    st.write(f"### Location: {Location} - {round(df_lcoe["LAT"],5)}, {round(df_lcoe["LON"],5)}")
 
     st.write("#### Your diesel genset performance:")
     col1, col2, col3 = st.columns(3, gap="small")
