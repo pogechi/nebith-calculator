@@ -16,6 +16,12 @@ color: #F5F5F5;
 [data-testid="stBaseButton-secondaryFormSubmit"] {
 background-color: #005F73;
 }
+[data-testid="stBaseButton-segmented_control"] {
+color: #2E2E2E;
+}
+[data-testid="stBaseButton-segmented_controlActive"] {
+color: #F5F5F5;
+}
 [data-testid="stAlertContentSuccess"] {
 color: #F5F5F5;
 }
@@ -62,14 +68,16 @@ with st.form("nebith_form"):
     country_input = st.selectbox(label="Country", options=country, index=None, placeholder="Select a country...")
 
     st.write("##### 3. How big is your diesel genset?")
-    slider_opts = [5, 10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000]
-    genset_size = st.segmented_control(label="Genset rated power (kW)", options=slider_opts, default=500)
-    currency_input = st.selectbox(label="Currency", options= ["USD", "GBP", "EUR"])
+    slider_opts = [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000]
+    genset_size = st.selectbox(label="Genset rated power (kW)", options=slider_opts, index=None, placeholder="Select a size...")
+    currency_input = st.segmented_control(label="Currency", options= ["USD", "GBP", "EUR"])
 
-    st.write("#### We're almost there, now share your name and e-mail address with us, so we can send you the current report as a PDF file.")
+    st.divider()
+
+    st.write("#### We're almost there, now share your name and e-mail address with us to receive the current report as a PDF file.")
 
     st.write("##### 4. Full name")
-    name_input = st.text_input(label="First name, Last name")
+    name_input = st.text_input(label="First name, Last name", placeholder="Jane Doe")
 
     st.write("##### 5. E-mail address")
     email_input = st.text_input(label="", label_visibility="collapsed", placeholder="jane@doe.com")
