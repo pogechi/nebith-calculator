@@ -97,7 +97,7 @@ with st.form("nebith_form"):
     generate = st.form_submit_button(label="Generate report")
 
 if generate:
-    st.success("Thank you! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
+    st.success(f"Thank you {name_input}! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
 
     # Locate city
 
@@ -231,10 +231,10 @@ if generate:
     ratio = genset_size / power_rated_gen
 
     yearly_load = ratio * Pload.sum() # kWh
-    yearly_fuel_consumption = ratio * (d_oper_stats.fuel_consumed.sum()) # l
+    yearly_fuel_consumption = ratio * (d_oper_stats.gen_fuel) # l
     yearly_fuel_costs = ratio * yearly_fuel_consumption * d_fuel_price
-    yearly_om_costs = ratio * d_mg_costs.om_costs
-    yearly_total_costs = ratio * d_mg_costs.total_costs
+    yearly_om_costs = ratio * d_mg_costs.system.om
+    yearly_total_costs = ratio * d_mg_costs.npc
     yearly_co2_emissions = yearly_fuel_consumption * 2.68 / 1000 # ton
     yearly_voc_compounds = yearly_fuel_consumption * 24 / 1000 # ppm
     diesel_genset_noise = 75 + 10 * np.log10(ratio * power_rated_gen)  # dB
@@ -242,6 +242,7 @@ if generate:
 # Currency exchange
 
     exch_rates = {"USD": 1, "GBP": 0.81, "EUR": 0.91}
+    currency_symbols = {"USD": "$", "GBP": "£", "EUR": "€"} 
 
 # Plot map with location centered
     with st.spinner('Generating map...'):
@@ -254,22 +255,22 @@ if generate:
 
     st.write("#### Your diesel genset performance:")
     col1, col2, col3 = st.columns(3, gap="small")
-    col1.metric("CO2 emissions", f"{yearly_co2_emissions:.2f} ton", delta="ESG", delta_arrow="down", delta_color="red", border=True)
-    col2.metric("Noise pollution", f"{diesel_genset_noise:.2f} dB", delta="noisy", delta_color="red", border=True)
-    col3.metric("VOC compounds", f"{yearly_voc_compounds:.2f} ppm", delta="HSE costs", delta_color="red", border=True)
+    col1.metric("CO2 emissions", f"{yearly_co2_emissions:.0f} ton", delta="ESG", delta_arrow="down", delta_color="red", border=True)
+    col2.metric("Noise pollution", f"{diesel_genset_noise:.0f} dB", delta="noisy", delta_color="red", border=True)
+    col3.metric("VOC compounds", f"{yearly_voc_compounds:.0f} ppm", delta="HSE costs", delta_color="red", border=True)
     
 
-    st.write("#### Your costs:")
+    st.write("#### Your yearly costs:")
     col4, col5, col6 = st.columns(3, gap="small")    
-    col4.metric("Yearly expenditure", f"{exch_rates[currency_input] * yearly_total_costs:.2f} {currency_input}", delta=None, border=True)
-    col5.metric("Yearly fuel costs", f"{exch_rates[currency_input] * yearly_fuel_costs:.2f} {currency_input}", delta=None, border=True)
-    col6.metric("Yearly maintenance costs", f"{exch_rates[currency_input] * yearly_om_costs:.2f} {currency_input}", delta=None, border=True)
+    col4.metric(f"Expenditure", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=None, border=True)
+    col5.metric(f"Fuel costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta=None, border=True)
+    col6.metric(f"Maintenance costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_om_costs:,.0f}", delta=None, border=True)
         
     st.divider()
 
     with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
         st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2)}%!")
-        st.write(f"#### 2. Save up to {exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load):.2f} {currency_input} every year!")
+        st.write(f"#### 2. Save up to {currency_input} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
         st.write("#### 3. Electrify your operations with clean, reliable energy.")
 
     st.divider()
