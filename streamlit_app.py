@@ -197,7 +197,7 @@ if generate:
     d_energy_rated_sto = 1000 # rated energy capacity (kWh)
     d_investment_price_sto = 250 # initial investiment price ($/kWh)
     d_fuel_price = 2 # fuel price ($/l)
-    d_power_rated_pv = 350. # rated power (kW)
+    d_power_rated_pv = 0 # rated power (kW)
 
     d_generator = mgs.DispatchableGenerator(power_rated_gen,
         fuel_intercept, fuel_slope, d_fuel_price,
@@ -232,7 +232,7 @@ if generate:
 
     yearly_load = ratio * Pload.sum() # kWh
     yearly_fuel_consumption = ratio * (d_oper_stats.gen_fuel) # l
-    yearly_fuel_costs = ratio * yearly_fuel_consumption * d_fuel_price
+    yearly_fuel_costs = yearly_fuel_consumption * d_fuel_price
     yearly_om_costs = ratio * d_mg_costs.system.om
     yearly_total_costs = ratio * d_mg_costs.npc
     yearly_co2_emissions = yearly_fuel_consumption * 2.68 / 1000 # ton
@@ -273,14 +273,12 @@ if generate:
         load = microgrid.load
         arr = oper_traj.Prep - oper_traj.Pspill
         yearly_df = pd.DataFrame()
-        yearly_df["Load (kW)"] = np.bincount(np.arange(len(load))//730, load)
-        yearly_df["Solar Production (kW)"] = np.bincount(np.arange(len(arr))//730, arr)
-        yearly_df["Month"] = range(1,13)
-        # plt.bar(x=range(1,13), height=)
-        # plt.bar(x=range(1,13), height=np.bincount(np.arange(len(arr))//730, arr))
+        yearly_df["Load (kWh)"] = np.bincount(np.arange(len(load))//730, load)
+        yearly_df["Solar Production (kWh)"] = np.bincount(np.arange(len(arr))//730, arr)
+        yearly_df["Month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-        st.bar_chart(yearly_df, x="Month", y=["Load (kW)", "Solar Production (kW)"], 
-                     height=400, stack="layered")
+        st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
+                     height=400, stack="layered", color=["#0A9396", "#FFD60A"])
         st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2)}%!")
         st.write(f"#### 2. Save up to {currency_input} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
         st.write("#### 3. Electrify your operations with clean, reliable energy.")
