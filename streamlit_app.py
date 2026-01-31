@@ -70,8 +70,8 @@ with st.form("nebith_form"):
     st.write("##### 3. How big is your diesel genset?")
     genset_opts = [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000]
     genset_size = st.segmented_control(label="Genset rated power (kW)", options=genset_opts, default=500)
-    st.write("#####    How much did you spend in fuel last year?")
-    money_input = st.pills_input(label="Amount spent", options=["< 10K", "10K - 50K", "50K - 100K", "100K - 500K", "> 500K"], default="10K - 50K")
+    st.write("#####    How much did you spend on fuel last year?")
+    money_input = st.pills(label="Amount spent", options=["< 10K", "10K - 50K", "50K - 100K", "100K - 500K", "> 500K"], default="10K - 50K")
     currency_input = st.segmented_control(label="Currency", options= ["USD", "GBP", "EUR"], default="USD")
 
     st.divider()
