@@ -279,7 +279,7 @@ if generate:
 
         st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
                      height=400, stack="layered", color=["#0A9396", "#FFD60A"],
-                     sort=False)
+                     sort=False, alpha=1)
         st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}!")
         st.write(f"#### 2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
         st.write("#### 3. Electrify your operations with clean, reliable energy.")
