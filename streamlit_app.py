@@ -234,7 +234,7 @@ if generate:
     yearly_fuel_consumption = ratio * (d_oper_stats.gen_fuel) # l
     yearly_fuel_costs = yearly_fuel_consumption * d_fuel_price
     yearly_om_costs = ratio * d_mg_costs.system.om / lifetime
-    yearly_total_costs = ratio * d_mg_costs.npc / lifetime
+    yearly_total_costs = ratio * (d_mg_costs.generator.investment + d_mg_costs.generator.replacement) / lifetime
     yearly_co2_emissions = yearly_fuel_consumption * 2.68 / 1000 # ton
     yearly_voc_compounds = yearly_fuel_consumption * 24 / 1000 # ppm
     diesel_genset_noise = 75 + 10 * np.log10(ratio * power_rated_gen)  # dB
@@ -262,8 +262,8 @@ if generate:
 
     st.write("#### Your yearly costs:")
     col4, col5, col6 = st.columns(3, gap="small")    
-    col4.metric(f"Expenditure", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=None, border=True)
-    col5.metric(f"Fuel costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta=None, border=True)
+    col4.metric(f"Genset rental", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=None, border=True)
+    col5.metric(f"Fuel", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta=None, border=True)
     col6.metric(f"Maintenance costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_om_costs:,.0f}", delta=None, border=True)
         
     st.divider()
@@ -278,7 +278,7 @@ if generate:
         yearly_df["Month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
         st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
-                     height=400, stack="layered", color=["#0A9396", "#FFD60A"],
+                     height=400, stack="layered", color=["#0A9496FF", "#FFD60AFF"],
                      sort=False)
         st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}!")
         st.write(f"#### 2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
