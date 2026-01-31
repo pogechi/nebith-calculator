@@ -233,8 +233,8 @@ if generate:
     yearly_load = ratio * Pload.sum() # kWh
     yearly_fuel_consumption = ratio * (d_oper_stats.gen_fuel) # l
     yearly_fuel_costs = yearly_fuel_consumption * d_fuel_price
-    yearly_om_costs = ratio * d_mg_costs.system.om
-    yearly_total_costs = ratio * d_mg_costs.npc
+    yearly_om_costs = ratio * d_mg_costs.system.om / lifetime
+    yearly_total_costs = ratio * d_mg_costs.npc / lifetime
     yearly_co2_emissions = yearly_fuel_consumption * 2.68 / 1000 # ton
     yearly_voc_compounds = yearly_fuel_consumption * 24 / 1000 # ppm
     diesel_genset_noise = 75 + 10 * np.log10(ratio * power_rated_gen)  # dB
@@ -278,9 +278,10 @@ if generate:
         yearly_df["Month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
         st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
-                     height=400, stack="layered", color=["#0A9396", "#FFD60A"])
-        st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2)}%!")
-        st.write(f"#### 2. Save up to {currency_input} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
+                     height=400, stack="layered", color=["#0A9396", "#FFD60A"],
+                     sort="Jan")
+        st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}!")
+        st.write(f"#### 2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
         st.write("#### 3. Electrify your operations with clean, reliable energy.")
 
     st.divider()
