@@ -269,6 +269,17 @@ if generate:
     st.divider()
 
     with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
+        
+        load = microgrid.load
+        arr = oper_traj.Prep - oper_traj.Pspill
+        yearly_df = pd.DataFrame()
+        yearly_df["Load (kW)"] = load
+        yearly_df["Solar Production (kW)"] = arr
+        # plt.bar(x=range(1,13), height=np.bincount(np.arange(len(load))//730, load))
+        # plt.bar(x=range(1,13), height=np.bincount(np.arange(len(arr))//730, arr))
+
+        st.bar_chart(yearly_df.resample("M").sum(), x="Month", y=["Load (kW)", "Solar Production (kW)"], 
+                     height=400, stack="layered")
         st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2)}%!")
         st.write(f"#### 2. Save up to {currency_input} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
         st.write("#### 3. Electrify your operations with clean, reliable energy.")
