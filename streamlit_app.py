@@ -22,6 +22,12 @@ color: #2E2E2E;
 [data-testid="stBaseButton-segmented_controlActive"] {
 color: #F5F5F5;
 }
+[data-testid="stBaseButton-pills"] {
+color: #2E2E2E;
+}
+[data-testid="stBaseButton-pillsActive"] {
+color: #F5F5F5;
+}
 [data-testid="stAlertContentSuccess"] {
 color: #F5F5F5;
 }
