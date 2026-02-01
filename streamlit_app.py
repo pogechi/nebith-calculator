@@ -251,16 +251,16 @@ if generate:
             longitude=df_lcoe["LON"], 
             color="#FFD60A", size=70000)
         
-    st.write(f"### Location: {Location} ({round(loc.y[0],5)}, {round(loc.x[0],5)})")
+    st.write(f"### 🗺 Location: {Location} ({round(loc.y[0],5)}, {round(loc.x[0],5)})")
 
-    st.write("#### Your diesel genset performance:")
+    st.write("#### 😷 Your diesel genset performance:")
     col1, col2, col3 = st.columns(3, gap="small")
     col1.metric("CO2 emissions", f"{yearly_co2_emissions:.0f} ton", delta="ESG", delta_arrow="down", delta_color="red", border=True)
     col2.metric("Noise pollution", f"{diesel_genset_noise:.0f} dB", delta="noisy", delta_color="red", border=True)
     col3.metric("VOC compounds", f"{yearly_voc_compounds:.0f} ppm", delta="HSE costs", delta_color="red", border=True)
     
 
-    st.write("#### Your yearly costs:")
+    st.write("#### 📊 Your yearly costs:")
     col4, col5, col6 = st.columns(3, gap="small")    
     col4.metric(f"Genset rental", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=None, border=True)
     col5.metric(f"Fuel", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta=None, border=True)
@@ -268,21 +268,28 @@ if generate:
         
     st.divider()
 
-    with st.expander("### If you switch to NEBITH's solar microgrid, you could:"):
-        
-        load = microgrid.load
-        arr = oper_traj.Prep - oper_traj.Pspill
-        yearly_df = pd.DataFrame()
-        yearly_df["Load (kWh)"] = np.bincount(np.arange(len(load))//730, load)
-        yearly_df["Solar Production (kWh)"] = np.bincount(np.arange(len(arr))//730, arr)
-        yearly_df["Month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    st.write("#### 🌞 If you switch to NEBITH's solar microgrid, you could:"):
 
-        st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
-                     height=400, stack=False, color=["#0A9496FF", "#FFD60AFF"],
-                     sort=False)
-        st.write(f"#### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}!")
-        st.write(f"#### 2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
-        st.write("#### 3. Electrify your operations with clean, reliable energy.")
+    st.write(f"##### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}!")
+    st.write(f"##### 2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
+    st.write("##### 3. Electrify your operations with clean, reliable energy.")
+       
+    load = microgrid.load
+    arr = oper_traj.Prep - oper_traj.Pspill
+    yearly_df = pd.DataFrame()
+    yearly_df["Load (kWh)"] = np.bincount(np.arange(len(load))//730, load)
+    yearly_df["Solar Production (kWh)"] = np.bincount(np.arange(len(arr))//730, arr)
+    yearly_df["Month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
+                    height=400, stack=False, color=["#0A9496FF", "#FFD60AFF"],
+                    sort=False)
+
+    col7, col8, col9 = st.columns(3, gap="small")    
+    col7.metric("Pay-as-you-go pricing", f"{currency_symbols[currency_input]} / kWh}", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
+    col8.metric("Fixed fee", "Up to 5 years", delta="Good for business", delta_arrow="up", delta_color="green", border=True)
+    col9.metric(f"Verifiable emissions reductions", "🌱", delta="CO2 savings", delta_arrow="down", delta_color="green", border=True)
+
 
     st.divider()
 
