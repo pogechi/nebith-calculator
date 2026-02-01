@@ -286,7 +286,7 @@ if generate:
                     sort=False)
 
     col7, col8, col9 = st.columns(3, gap="small")    
-    col7.metric("Pay-as-you-go pricing", f"{currency_symbols[currency_input]} / kWh}", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
+    col7.metric("Pay-as-you-go pricing", f"{currency_symbols[currency_input]} / kWh", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
     col8.metric("Fixed fee", "Up to 5 years", delta="Good for business", delta_arrow="up", delta_color="green", border=True)
     col9.metric(f"Verifiable emissions reductions", "🌱", delta="CO2 savings", delta_arrow="down", delta_color="green", border=True)
 
