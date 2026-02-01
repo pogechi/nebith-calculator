@@ -49,6 +49,7 @@ color: #F5F5F5;
 """
 st.markdown(pg_bg, unsafe_allow_html=True)
 st.title("Let's get rid of diesel gensets!")
+st.image("Microgrid 3.png")
 st.write("#### At NEBITH, we have developed a solar microgrid that can reduce diesel fuel consumption by up to 85%.")
 st.write("#### Have you rented a diesel genset for your operations? Share your story and we'll tell you how much money NEBITH could save you.")
 
