@@ -81,7 +81,7 @@ with st.form("nebith_form"):
     genset_opts = [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000]
     genset_size = st.segmented_control(label="Genset rated power (kW)", options=genset_opts, default=500)
     st.write("#####    How much did you spend on fuel last year?")
-    money_input = st.pills(label="Amount spent", options=["< 10K", "10K - 50K", "50K - 100K", "100K - 500K", "> 500K"], default="10K - 50K")
+    money_input = st.pills(label="Amount spent", options=["< 10K", "10K - 50K", "50K - 100K", "100K - 500K", "\> 500K", "Don't know"], default="10K - 50K")
     currency_input = st.segmented_control(label="Currency", options= ["USD", "GBP", "EUR"], default="USD")
 
     st.divider()
@@ -89,7 +89,7 @@ with st.form("nebith_form"):
     st.write("#### We're almost there, now share your name and e-mail address to receive our report as a PDF file.")
 
     st.write("##### 4. Full name")
-    name_input = st.text_input(label="First name, Last name", placeholder="Jane Doe")
+    name_input = st.text_input(label="", placeholder="Jane Doe")
 
     st.write("##### 5. E-mail address")
     email_input = st.text_input(label="", label_visibility="collapsed", placeholder="jane@doe.com")
