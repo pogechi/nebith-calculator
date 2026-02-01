@@ -270,9 +270,9 @@ if generate:
 
     st.write("#### 🌞 If you switch to NEBITH's solar microgrid, you could:")
 
-    st.write(f"##### 1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}!")
-    st.write(f"##### 2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year!")
-    st.write("##### 3. Electrify your operations with clean, reliable energy.")
+    st.subheader(f"1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}.", divider="yellow")
+    st.subheader(f"2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year.", divider="yellow")
+    st.subheader("3. Electrify your operations with clean, reliable energy.", divider="yellow")
        
     load = microgrid.load
     arr = oper_traj.Prep - oper_traj.Pspill
@@ -287,8 +287,8 @@ if generate:
 
     col7, col8, col9 = st.columns(3, gap="small")    
     col7.metric("Pay-as-you-go pricing", f"{currency_symbols[currency_input]} / kWh", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
-    col8.metric("Fixed fee", "Up to 5 years", delta="Good for business", delta_arrow="up", delta_color="green", border=True)
-    col9.metric(f"Verifiable emissions reductions", "🌱", delta="CO2 savings", delta_arrow="down", delta_color="green", border=True)
+    col8.metric("Fixed rate", "Up to 5 yrs", delta="Good for business", delta_arrow="up", delta_color="green", border=True)
+    col9.metric(f"Verifiable emissions reductions", "🌱🌱🌱", delta="CO2 savings", delta_arrow="up", delta_color="green", border=True)
 
 
     st.divider()
