@@ -105,13 +105,7 @@ if generate:
     # Location = "Monza, Italy"
     Location = f"{city_input}, {country_input}"
 
-    from geopy.geocoders import Nominatim    
-    geolocator = Nominatim(user_agent="nebith-webapp")
-
-    # from geopy.extra.rate_limiter import RateLimiter
-    # geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
-
-    loc = gpd.tools.geocode(Location, provider="nominatim", user_agent="nebith-webapp")["geometry"]
+    loc = gpd.tools.geocode(Location, provider="GoogleV3", api_key=st.secrets["GOOGLE_MAPS_API_KEY"], user_agent="nebith-webapp")["geometry"]
 
     pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=float(loc.y[0]), 
                                                 longitude=float(loc.x[0]), 
