@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import microgrids as mgs
 import pandas as pd
-import geopandas as gpd
+# import geopandas as gpd
+from geopy.geocoders import GoogleV3
 import pvlib
 import seaborn as sns
 
@@ -104,12 +105,14 @@ if generate:
 
     # Location = "Monza, Italy"
     Location = f"{city_input}, {country_input}"
+    geolocator = GoogleV3(api_key=api_key, user_agent="nebith-webapp")
+    loc = geolocator.geocode(Location)
 
-    loc = gpd.tools.geocode(Location, provider="Nominatim", user_agent="nebith-webapp")["geometry"]
+    # loc = gpd.tools.geocode(Location, provider="Nominatim", user_agent="nebith-webapp")["geometry"]
     # loc = gpd.tools.geocode(Location, provider="GoogleV3", api_key=st.secrets["GOOGLE_MAPS_API_KEY"], user_agent="nebith-webapp")["geometry"]
 
-    pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=float(loc.y[0]), 
-                                                longitude=float(loc.x[0]), 
+    pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=loc.latitude, 
+                                                longitude=loc.longitude, 
                                                 start=2023, end=2023, 
                                                 components=False, 
                                                 optimalangles=True)
@@ -191,8 +194,8 @@ if generate:
     df_lcoe["Load Shedding (%)"] = [float(oper_stats.shed_rate)]
     df_lcoe["Renewable Rate (%)"] = [float(oper_stats.renew_rate)]
     df_lcoe["LCOE (USD/kWh)"] = [round(float(mg_costs.lcoe),4)]
-    df_lcoe["LAT"] = loc.y[0]
-    df_lcoe["LON"] = loc.x[0]
+    df_lcoe["LAT"] = loc.latitude
+    df_lcoe["LON"] = loc.longitude
 
 # Calculate diesel data
 
@@ -258,7 +261,7 @@ if generate:
             longitude=df_lcoe["LON"], 
             color="#FFD60A", size=70000)
         
-    st.write(f"### 🗺 Location: {Location} ({round(loc.y[0],5)}, {round(loc.x[0],5)})")
+    st.write(f"### 🗺 Location: {Location} ({round(loc.latitude,5)}, {round(loc.longitude,5)})")
 
     st.write("#### 😷 Your diesel genset performance")
     col1, col2, col3 = st.columns(3, gap="small")
