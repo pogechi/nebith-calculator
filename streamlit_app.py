@@ -105,8 +105,8 @@ if generate:
     Location = "Monza, Italy"
     # Location = f"{city_input}, {country_input}"
 
-    from geopy.extra.rate_limiter import RateLimiter
-    geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+    # from geopy.extra.rate_limiter import RateLimiter
+    # geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
 
 
     loc = gpd.tools.geocode(Location)["geometry"]
