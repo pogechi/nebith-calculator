@@ -108,8 +108,9 @@ if generate:
     # from geopy.extra.rate_limiter import RateLimiter
     # geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
 
+    loc = {"y": 45.57873120303232, "x": 9.270642025695542}
 
-    loc = gpd.tools.geocode(Location)["geometry"]
+    #loc = gpd.tools.geocode(Location)["geometry"]
 
     pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=float(loc.y[0]), 
                                                 longitude=float(loc.x[0]), 
