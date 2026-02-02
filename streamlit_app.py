@@ -106,14 +106,12 @@ if generate:
     Location = f"{city_input}, {country_input}"
 
     from geopy.geocoders import Nominatim    
-    geolocator = Nominatim(user_agent="nebith-calculator")
+    geolocator = Nominatim(user_agent="nebith-webapp")
 
     # from geopy.extra.rate_limiter import RateLimiter
     # geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
 
-    # loc = {"y": 45.57873120303232, "x": 9.270642025695542}
-
-    loc = gpd.tools.geocode(Location, provider="nominatim", user_agent="nebith-calculator")["geometry"]
+    loc = gpd.tools.geocode(Location, provider="nominatim", user_agent="nebith-webapp")["geometry"]
 
     pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=float(loc.y[0]), 
                                                 longitude=float(loc.x[0]), 
@@ -283,7 +281,7 @@ if generate:
     
     col5.write("##### With NEBITH's solar microgrid:")
     col5.metric("Nebith rental fee", "Included in our rate", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
-    col5.metric("Fuel savings", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * fuel_savings:,.0f}", delta=f"{round(float(fuel_savings / yearly_fuel_costs), 1):.0%} savings", delta_arrow="down", delta_color="green", border=True)
+    col5.metric("Fuel savings", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * fuel_savings:,.0f}", delta=f"{abs(round(float(fuel_savings / yearly_fuel_costs), 1)):.0%} savings", delta_arrow="down", delta_color="green", border=True)
     col5.metric("Maintenance costs", "Included in our rate", delta="No hassles for you", delta_arrow="up", delta_color="green", border=True)
 
     print(f"{fuel_savings}, {yearly_fuel_costs}, {nebith_fuel_costs}")
