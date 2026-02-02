@@ -105,7 +105,7 @@ if generate:
 
     # Location = "Monza, Italy"
     Location = f"{city_input}, {country_input}"
-    geolocator = GoogleV3(api_key=api_key, user_agent="nebith-webapp")
+    geolocator = GoogleV3(api_key=st.secrets["GOOGLE_MAPS_API_KEY"], user_agent="nebith-webapp")
     loc = geolocator.geocode(Location)
 
     # loc = gpd.tools.geocode(Location, provider="Nominatim", user_agent="nebith-webapp")["geometry"]
