@@ -232,8 +232,12 @@ if generate:
     ratio = genset_size / power_rated_gen
 
     yearly_load = ratio * Pload.sum() # kWh
-    yearly_fuel_consumption = ratio * (d_oper_stats.gen_fuel) # l
+
+    yearly_fuel_consumption = ratio * (d_oper_stats.gen_fuel) # l    
     yearly_fuel_costs = yearly_fuel_consumption * d_fuel_price
+    nebith_fuel_costs = ratio * oper_stats.gen_fuel * fuel_price
+    fuel_savings = nebith_fuel_costs - yearly_fuel_costs # currency units
+        
     yearly_om_costs = ratio * d_mg_costs.system.om / lifetime
     yearly_total_costs = ratio * (d_mg_costs.generator.investment + d_mg_costs.generator.replacement) / lifetime
     yearly_co2_emissions = yearly_fuel_consumption * 2.68 / 1000 # ton
@@ -254,19 +258,27 @@ if generate:
         
     st.write(f"### 🗺 Location: {Location} ({round(loc.y[0],5)}, {round(loc.x[0],5)})")
 
-    st.write("#### 😷 Your diesel genset performance:")
+    st.write("#### 😷 Your diesel genset performance")
     col1, col2, col3 = st.columns(3, gap="small")
     col1.metric("CO2 emissions", f"{yearly_co2_emissions:.0f} ton", delta="ESG", delta_arrow="down", delta_color="red", border=True)
     col2.metric("Noise pollution", f"{diesel_genset_noise:.0f} dB", delta="noisy", delta_color="red", border=True)
     col3.metric("VOC compounds", f"{yearly_voc_compounds:.0f} ppm", delta="HSE costs", delta_color="red", border=True)
     
 
-    st.write("#### 📊 Your yearly costs:")
-    col4, col5, col6 = st.columns(3, gap="small")    
-    col4.metric(f"Genset rental", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=None, border=True)
-    col5.metric(f"Fuel", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta=None, border=True)
-    col6.metric(f"Maintenance costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_om_costs:,.0f}", delta=None, border=True)
-        
+    st.write("#### 📊 Your yearly costs")
+    col4, col5 = st.columns(2, gap="small")
+    col4.write("##### With your old Diesel genset:")    
+    col4.metric(f"Diesel genset rental", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs / 52:,.0f}/week", border=True)
+    col4.metric(f"Diesel fuel", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta="...and you handle the logistics!", delta_color="red", border=True)
+    col4.metric(f"Genset maintenance costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_om_costs:,.0f}", delta="< 90% uptime", delta_color="red", border=True)
+    
+    col5.write("##### With NEBITH's solar microgrid:")
+    col5.metric("Nebith rental fee", "Included in our rate", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
+    col5.metric("Fuel savings", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * fuel_savings:,.0f}", delta=f"{round(float(fuel_savings / yearly_fuel_costs), 1):.0%} savings", delta_arrow="down", delta_color="green", border=True)
+    col5.metric("Maintenance costs", "Included in our rate", delta="No hassles for you", delta_arrow="up", delta_color="green", border=True)
+
+    print(f"{fuel_savings}, {yearly_fuel_costs}, {nebith_fuel_costs}")
+
     st.divider()
 
     st.write("#### 🌞 If you switch to NEBITH's solar microgrid, you could:")
@@ -274,7 +286,9 @@ if generate:
     st.subheader(f"1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}.", divider="yellow")
     st.subheader(f"2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year.", divider="yellow")
     st.subheader("3. Electrify your operations with clean, reliable energy.", divider="yellow")
-       
+    
+    st.write("#### 📈 Here's a breakdown of your yearly load vs solar production:")
+
     load = microgrid.load
     arr = oper_traj.Prep - oper_traj.Pspill
     yearly_df = pd.DataFrame()
