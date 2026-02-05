@@ -126,7 +126,7 @@ if generate:
 
         conn.update(data=old_form, worksheet="Form Responses")
 
-        st.success(f"Thank you {name_input}! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
+        st.success(f"Thank you {name_input}! Your report is being generated and will appear below.")
 
     # Locate city
 
@@ -341,6 +341,10 @@ if generate:
     st.divider()
 
     st.write("#### 📩 Ready to make the switch? Download our brochure below  and let's discuss your off-grid power needs.")
+    
     brochure = "Nebith_Brochure.pdf"
-    download = st.download_button("Download full report (PDF)", data=brochure, file_name="nebith_report.pdf", mime="application/pdf")
+    with open(brochure, "rb") as pdf_file:
+        PDF = pdf_file.read()
+    
+    download = st.download_button("Download our brochure", data=PDF, file_name="Nebith_Brochure.pdf", mime="application/pdf", on_click="ignore")
     
