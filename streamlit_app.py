@@ -340,5 +340,7 @@ if generate:
 
     st.divider()
 
-    # download = st.download_button("Download full report (PDF)", data="dummy_pdf_content", file_name="nebith_report.pdf", mime="application/pdf")
+    st.write("#### 📩 Ready to make the switch? Download our brochure below  and let's discuss your off-grid power needs.")
+    brochure = "Nebith_Brochure.pdf"
+    download = st.download_button("Download full report (PDF)", data=brochure, file_name="nebith_report.pdf", mime="application/pdf")
     
