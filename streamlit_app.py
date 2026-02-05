@@ -109,6 +109,7 @@ if generate:
     if not industry_input or not city_input or not country_input or not name_input or not email_input:
         st.warning("Please fill in all required fields.")
     else:
+        old_form = conn.read(worksheet="Form Responses", usecols=list(range(10)), ttl=5)
         form_data = pd.DataFrame({
             "Industry": [industry_input],
             "City": [city_input],
@@ -120,7 +121,10 @@ if generate:
             "Email": [email_input],
             "Date": [today_iso]
         })
-        conn.update(data=form_data, worksheet="Form Responses")
+
+        old_form = pd.concat([old_form, form_data], ignore_index=True)  
+
+        conn.update(data=old_form, worksheet="Form Responses")
 
         st.success(f"Thank you {name_input}! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
 
