@@ -8,5 +8,3 @@ pandas
 pvlib
 geopy
 datetime
-io
-base64
