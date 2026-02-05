@@ -120,7 +120,7 @@ if generate:
             "Email": [email_input],
             "Date": [today_iso]
         })
-        conn.update(data=form_data, sheet="Form Responses", mode="append")
+        conn.update(data=form_data, worksheet="Form Responses", mode="append")
 
         st.success(f"Thank you {name_input}! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
 
