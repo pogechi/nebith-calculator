@@ -7,8 +7,6 @@ import microgrids as mgs
 import pandas as pd
 from geopy.geocoders import GoogleV3
 import pvlib
-import io
-import base64
 
 # Create a connection object.
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -342,15 +340,5 @@ if generate:
 
     st.divider()
 
-    # Convert chart to jpg image (base64 encoded)
-    stringIObytes = io.BytesIO()
-    plt.savefig(stringIObytes, format='jpg')
-    stringIObytes.seek(0)
-    base64_jpg = base64.b64encode(stringIObytes.read()).decode()
-
-    img_html = '<img src="data:image/png;base64, ' + base64_jpg + '" width=100%>'      
-    html = f"<h1>{Location}</h1>" + img_html
-
     # download = st.download_button("Download full report (PDF)", data="dummy_pdf_content", file_name="nebith_report.pdf", mime="application/pdf")
-    download = st.download_button(html, file_name='report.pdf', label='Download PDF report', mime="application/pdf")
     
