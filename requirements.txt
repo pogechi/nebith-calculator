@@ -5,7 +5,8 @@ matplotlib
 microgrids
 pathlib
 pandas
-seaborn
 pvlib
 geopy
 datetime
+io
+base64

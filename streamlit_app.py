@@ -7,7 +7,8 @@ import microgrids as mgs
 import pandas as pd
 from geopy.geocoders import GoogleV3
 import pvlib
-import seaborn as sns
+import io
+import base64
 
 # Create a connection object.
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -107,7 +108,8 @@ with st.form("nebith_form"):
 
 if generate:
     if not industry_input or not city_input or not country_input or not name_input or not email_input:
-        st.warning("Please fill in all required fields.")
+        st.warning("Please fill in all input fields.")
+        st.stop()
     else:
         old_form = conn.read(worksheet="Form Responses", usecols=list(range(10)), ttl=5)
         form_data = pd.DataFrame({
@@ -300,7 +302,7 @@ if generate:
     st.write("#### 📊 Your yearly costs")
     col4, col5 = st.columns(2, gap="small")
     col4.write("##### With your old Diesel genset:")    
-    col4.metric(f"Diesel genset rental", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs / 52:,.0f}/week", border=True)
+    col4.metric(f"Diesel genset rental", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs / 52:,.0f}/week", delta_color="red", border=True)
     col4.metric(f"Diesel fuel", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta="...and you handle the logistics!", delta_color="red", border=True)
     col4.metric(f"Genset maintenance costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_om_costs:,.0f}", delta="< 90% uptime", delta_color="red", border=True)
     
@@ -328,7 +330,7 @@ if generate:
     yearly_df["Solar Production (kWh)"] = np.bincount(np.arange(len(arr))//730, arr)
     yearly_df["Month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-    st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
+    bar = st.bar_chart(yearly_df, x="Month", y=["Load (kWh)", "Solar Production (kWh)"], 
                     height=400, stack=False, color=["#0A9496FF", "#FFD60AFF"],
                     sort=False)
 
@@ -340,4 +342,15 @@ if generate:
 
     st.divider()
 
-    download = st.download_button("Download full report (PDF)", data="dummy_pdf_content", file_name="nebith_report.pdf", mime="application/pdf")
+    # Convert chart to jpg image (base64 encoded)
+    stringIObytes = io.BytesIO()
+    plt.savefig(stringIObytes, format='jpg')
+    stringIObytes.seek(0)
+    base64_jpg = base64.b64encode(stringIObytes.read()).decode()
+
+    img_html = '<img src="data:image/png;base64, ' + base64_jpg + '" width=100%>'      
+    html = f"<h1>{Location}</h1>" + img_html
+
+    # download = st.download_button("Download full report (PDF)", data="dummy_pdf_content", file_name="nebith_report.pdf", mime="application/pdf")
+    download = st.download_button(html, file_name='report.pdf', label='Download PDF report', mime="application/pdf")
+    
