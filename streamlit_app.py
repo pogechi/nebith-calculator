@@ -1,12 +1,16 @@
 import streamlit as st
+from streamlit_gsheets import GSheetsConnection
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import date
 import microgrids as mgs
 import pandas as pd
-# import geopandas as gpd
 from geopy.geocoders import GoogleV3
 import pvlib
 import seaborn as sns
+
+# Create a connection object.
+conn = st.connection("gsheets", type=GSheetsConnection)
 
 pg_bg = """
 <style>
@@ -96,10 +100,29 @@ with st.form("nebith_form"):
     st.write("##### 5. E-mail address")
     email_input = st.text_input(label="", label_visibility="collapsed", placeholder="jane@doe.com")
 
+    today = date.today()
+    today_iso = date.isoformat(today)
+
     generate = st.form_submit_button(label="Generate report")
 
 if generate:
-    st.success(f"Thank you {name_input}! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
+    if not industry_input or not city_input or not country_input or not name_input or not email_input:
+        st.warning("Please fill in all required fields.")
+    else:
+        form_data = pd.DataFrame({
+            "Industry": [industry_input],
+            "City": [city_input],
+            "Country": [country_input],
+            "Genset Size (kW)": [genset_size],
+            "Money Spent on Fuel": [money_input],
+            "Currency": [currency_input],
+            "Name": [name_input],
+            "Email": [email_input],
+            "Date": [today_iso]
+        })
+        conn.write(form_data, sheet="Form Responses", mode="append")
+        
+        st.success(f"Thank you {name_input}! Your report is being generated and will be sent to your e-mail address shortly. Please find below a preview of the results.")
 
     # Locate city
 
