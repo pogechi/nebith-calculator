@@ -8,6 +8,8 @@ import pandas as pd
 from geopy.geocoders import GoogleV3
 import pvlib
 
+st.set_page_config(page_title="NEBITH's solar microgrid", page_icon="🌞", layout="centered")
+
 # Create a connection object.
 conn = st.connection("gsheets", type=GSheetsConnection)
 
