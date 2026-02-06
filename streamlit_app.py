@@ -109,7 +109,7 @@ with st.form("nebith_form"):
     generate = st.form_submit_button(label="Generate report")
 
 if generate:
-    if not industry_input or not city_input or not country_input or not name_input or not email_input or not re.match(pattern, email_input):
+    if not industry_input or not city_input or not country_input or not name_input or not email_input or not re.match(pattern, email_input) == True:
 
         st.warning("Please fill in all input fields as indicated.")
         st.stop()
