@@ -7,6 +7,7 @@ import microgrids as mgs
 import pandas as pd
 from geopy.geocoders import GoogleV3
 import pvlib
+import re
 
 st.set_page_config(page_title="NEBITH's solar microgrid", page_icon="🌞", layout="centered")
 
@@ -103,12 +104,19 @@ with st.form("nebith_form"):
 
     today = date.today()
     today_iso = date.isoformat(today)
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$'
 
     generate = st.form_submit_button(label="Generate report")
 
 if generate:
-    if not industry_input or not city_input or not country_input or not name_input or not email_input:
-        st.warning("Please fill in all input fields.")
+    if not industry_input 
+    or not city_input 
+    or not country_input 
+    or not name_input 
+    or not email_input 
+    or not re.match(pattern, email_input):
+
+        st.warning("Please fill in all input fields as indicated.")
         st.stop()
     else:
         old_form = conn.read(worksheet="Form Responses", usecols=list(range(10)), ttl=5)
