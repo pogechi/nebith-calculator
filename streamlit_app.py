@@ -262,24 +262,24 @@ if generate:
     d_df_lcoe["LCOE (USD/kWh)"] = [round(float(d_mg_costs.lcoe),4)]
 
     ratio = genset_size / power_rated_gen
-
     yearly_load = ratio * Pload.sum() # kWh
 
-    yearly_fuel_consumption = ratio * (d_oper_stats.gen_fuel) # l    
-    yearly_fuel_costs = yearly_fuel_consumption * d_fuel_price
+    yearly_fuel_costs = ratio * d_oper_stats.gen_fuel * d_fuel_price
     nebith_fuel_costs = ratio * oper_stats.gen_fuel * fuel_price
     fuel_savings = nebith_fuel_costs - yearly_fuel_costs # currency units
         
     yearly_om_costs = ratio * d_mg_costs.system.om / lifetime
     yearly_total_costs = ratio * (d_mg_costs.generator.investment + d_mg_costs.generator.replacement) / lifetime
-    yearly_co2_emissions = yearly_fuel_consumption * 2.68 / 1000 # ton
-    yearly_voc_compounds = yearly_fuel_consumption * 24 / 1000 # ppm
+    yearly_co2_emissions = ratio * d_oper_stats.gen_fuel * 2.68 / 1000 # ton
+    yearly_voc_compounds = ratio * d_oper_stats.gen_fuel * 24 / 1000 # ppm
     diesel_genset_noise = 75 + 10 * np.log10(ratio * power_rated_gen)  # dB
 
 # Currency exchange
 
     exch_rates = {"USD": 1, "GBP": 0.81, "EUR": 0.91}
-    currency_symbols = {"USD": "$", "GBP": "£", "EUR": "€"} 
+    currency_symbols = {"USD": "$", "GBP": "£", "EUR": "€"}
+    currency_conversion = exch_rates[currency_input]
+    user_currency = currency_symbols[currency_input] 
 
 # Plot map with location centered
     with st.spinner('Generating map...'):
@@ -300,13 +300,13 @@ if generate:
     st.write("#### 📊 Your yearly costs")
     col4, col5 = st.columns(2, gap="small")
     col4.write("##### With your old Diesel genset:")    
-    col4.metric(f"Diesel genset rental", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs:,.0f}", delta=f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_total_costs / 52:,.0f}/week", delta_color="red", border=True)
-    col4.metric(f"Diesel fuel", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_fuel_costs:,.0f}", delta="...and you handle the logistics!", delta_color="red", border=True)
-    col4.metric(f"Genset maintenance costs", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * yearly_om_costs:,.0f}", delta="< 90% uptime", delta_color="red", border=True)
+    col4.metric(f"Diesel genset rental", f"{user_currency} {currency_conversion * yearly_total_costs:,.0f}", delta=f"{user_currency} {currency_conversion * yearly_total_costs / 52:,.0f}/week", delta_color="red", border=True)
+    col4.metric(f"Diesel fuel", f"{user_currency} {currency_conversion * yearly_fuel_costs:,.0f}", delta="...and you handle the logistics!", delta_color="red", border=True)
+    col4.metric(f"Genset maintenance costs", f"{user_currency} {currency_conversion * yearly_om_costs:,.0f}", delta="< 90% uptime", delta_color="red", border=True)
     
     col5.write("##### With NEBITH's solar microgrid:")
     col5.metric("Nebith rental fee", "Included in our rate", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
-    col5.metric("Fuel savings", f"{currency_symbols[currency_input]} {exch_rates[currency_input] * fuel_savings:,.0f}", delta=f"{abs(round(float(fuel_savings / yearly_fuel_costs), 1)):.0%} savings", delta_arrow="down", delta_color="green", border=True)
+    col5.metric("Fuel savings", f"{user_currency} {currency_conversion * fuel_savings:,.0f}", delta=f"{abs(round(float(fuel_savings / yearly_fuel_costs), 1)):.0%} savings", delta_arrow="down", delta_color="green", border=True)
     col5.metric("Maintenance costs", "Included in our rate", delta="No hassles for you", delta_arrow="up", delta_color="green", border=True)
 
     print(f"{fuel_savings}, {yearly_fuel_costs}, {nebith_fuel_costs}")
@@ -316,7 +316,7 @@ if generate:
     st.write("#### 🌞 If you switch to NEBITH's solar microgrid, you could:")
 
     st.subheader(f"1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}.", divider="yellow")
-    st.subheader(f"2. Save up to {currency_symbols[currency_input]} {abs(exch_rates[currency_input] * (yearly_fuel_costs - d_df_lcoe['LCOE (USD/kWh)'].iloc[0] * yearly_load)):,.0f} every year.", divider="yellow")
+    st.subheader(f"2. Save up to {user_currency} {abs(currency_conversion * (df_lcoe['LCOE (USD/kWh)'].iloc[0] - d_df_lcoe['LCOE (USD/kWh)'].iloc[0]) * yearly_load):,.2f} on every kWh of electricity.", divider="yellow")
     st.subheader("3. Electrify your operations with clean, reliable energy.", divider="yellow")
     
     st.write("#### 📈 Here's a breakdown of your yearly load vs solar production:")
@@ -333,7 +333,7 @@ if generate:
                     sort=False)
 
     col7, col8, col9 = st.columns(3, gap="small")    
-    col7.metric("Pay-as-you-go pricing", f"{currency_symbols[currency_input]} / kWh", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
+    col7.metric("Pay-as-you-go pricing", f"{user_currency} / kWh", delta="No CapEx", delta_arrow="down", delta_color="green", border=True)
     col8.metric("Fixed rate", "Up to 5 yrs", delta="Good for business", delta_arrow="up", delta_color="green", border=True)
     col9.metric(f"Verifiable emissions reductions", "🌱🌱🌱", delta="CO2 savings", delta_arrow="up", delta_color="green", border=True)
 
