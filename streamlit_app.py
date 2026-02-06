@@ -115,7 +115,8 @@ if generate:
         or not country_input
         or not name_input
         or not email_input
-        ): # or not re.match(pattern, email_input):
+        or not re.match(pattern, email_input)
+        ):
 
         st.warning("Please fill in all input fields as indicated.")
         st.stop()
