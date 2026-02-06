@@ -341,7 +341,7 @@ if generate:
 
     st.divider()
 
-    st.write(f"#### 📩 So {name_input.split()[0]}, are you ready to make the switch? Download our brochure below  and let's discuss your off-grid power needs.")
+    st.write(f"#### 📩 So, {name_input.split()[0]}, are you ready to make the switch? Download our brochure below  and let's discuss your off-grid power needs.")
     
     brochure = "Nebith_Brochure.pdf"
     with open(brochure, "rb") as pdf_file:
