@@ -104,12 +104,12 @@ with st.form("nebith_form"):
 
     today = date.today()
     today_iso = date.isoformat(today)
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$'
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
     generate = st.form_submit_button(label="Generate report")
 
 if generate:
-    if not industry_input or not city_input or not country_input or not name_input or not email_input: # or not re.match(pattern, email_input) == True:
+    if not industry_input or not city_input or not country_input or not name_input or not email_input: # or not re.match(pattern, email_input):
 
         st.warning("Please fill in all input fields as indicated.")
         st.stop()
@@ -135,7 +135,6 @@ if generate:
 
     # Locate city
 
-    # Location = "Monza, Italy"
     Location = f"{city_input}, {country_input}"
     geolocator = GoogleV3(api_key=st.secrets["GOOGLE_MAPS_API_KEY"], user_agent="nebith-webapp")
     loc = geolocator.geocode(Location)
@@ -196,7 +195,6 @@ if generate:
     power_rated_pv = 350. # rated power (kW)
     om_price_pv = 20.# operation and maintenance price ($/kW)
     lifetime_pv = 25. # lifetime (y)
-    # Parameters with default values
     derating_factor_pv = 1.0 # derating factor (or performance ratio) ∈ [0,1]"
 
     photovoltaic = mgs.Photovoltaic(power_rated_pv, irradiance,
@@ -284,6 +282,7 @@ if generate:
     user_currency = currency_symbols[currency_input] 
 
 # Plot map with location centered
+
     with st.spinner('Generating map...'):
         st.map(df_lcoe, zoom=4, 
             latitude=df_lcoe["LAT"], 
@@ -348,5 +347,11 @@ if generate:
     with open(brochure, "rb") as pdf_file:
         PDF = pdf_file.read()
     
-    download = st.download_button("Download our brochure", data=PDF, file_name="Nebith_Brochure.pdf", mime="application/pdf", on_click="ignore")
+    download = st.download_button("More about NEBITH", data=PDF, file_name="Nebith_Brochure.pdf", mime="application/pdf", on_click="ignore")
     
+    license = "MIT License\n" \
+        "Copyright © 2022, 2023 Evelise de G. Antunes, Nabil Sadou and Pierre Haessig\n" \
+        "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n" \
+        "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    
+    st.expander("License", expanded=False).write(license)
