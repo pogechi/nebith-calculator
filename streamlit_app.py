@@ -96,7 +96,7 @@ with st.form("nebith_form"):
     st.write("#### We're almost there, now share your name and e-mail address to calculate your savings.")
 
     st.write("##### 4. Full name")
-    name_input = st.text_input(label="", placeholder="Jane Doe")
+    name_input = st.text_input(label="", label_visibility="collapsed", placeholder="Jane Doe")
 
     st.write("##### 5. E-mail address")
     email_input = st.text_input(label="", label_visibility="collapsed", placeholder="jane@doe.com")
@@ -128,7 +128,7 @@ if generate:
 
         conn.update(data=old_form, worksheet="Form Responses")
 
-        st.success(f"Thank you {name_input}! Your report is being generated and will appear below.")
+        st.success(f"Thank you {name_input.split()[0]}! Your report is being generated and will appear below.")
 
     # Locate city
 
@@ -136,9 +136,6 @@ if generate:
     Location = f"{city_input}, {country_input}"
     geolocator = GoogleV3(api_key=st.secrets["GOOGLE_MAPS_API_KEY"], user_agent="nebith-webapp")
     loc = geolocator.geocode(Location)
-
-    # loc = gpd.tools.geocode(Location, provider="Nominatim", user_agent="nebith-webapp")["geometry"]
-    # loc = gpd.tools.geocode(Location, provider="GoogleV3", api_key=st.secrets["GOOGLE_MAPS_API_KEY"], user_agent="nebith-webapp")["geometry"]
 
     pvgis_data = pvlib.iotools.get_pvgis_hourly(latitude=loc.latitude, 
                                                 longitude=loc.longitude, 
@@ -342,7 +339,7 @@ if generate:
 
     st.divider()
 
-    st.write("#### 📩 Ready to make the switch? Download our brochure below  and let's discuss your off-grid power needs.")
+    st.write(f"#### 📩 So {name_input.split()[0]}, are you ready to make the switch? Download our brochure below  and let's discuss your off-grid power needs.")
     
     brochure = "Nebith_Brochure.pdf"
     with open(brochure, "rb") as pdf_file:
