@@ -316,7 +316,7 @@ if generate:
     st.write("#### 🌞 If you switch to NEBITH's solar microgrid, you could:")
 
     st.subheader(f"1. Reduce your diesel fuel consumption by up to {round(float(oper_stats.renew_rate), 2):.0%}.", divider="yellow")
-    st.subheader(f"2. Save up to {user_currency} {abs(currency_conversion * (df_lcoe['LCOE (USD/kWh)'].iloc[0] - d_df_lcoe['LCOE (USD/kWh)'].iloc[0]) * yearly_load):,.2f} on every kWh of electricity.", divider="yellow")
+    st.subheader(f"2. Save up to {user_currency} {abs(currency_conversion * (df_lcoe['LCOE (USD/kWh)'].iloc[0] - d_df_lcoe['LCOE (USD/kWh)'].iloc[0])):,.2f} on every kWh of electricity.", divider="yellow")
     st.subheader("3. Electrify your operations with clean, reliable energy.", divider="yellow")
     
     st.write("#### 📈 Here's a breakdown of your yearly load vs solar production:")
