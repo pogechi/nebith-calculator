@@ -296,7 +296,7 @@ if generate:
             longitude=df_lcoe["LON"], 
             color="#FFD60A", size=70000)
         
-    st.write(f"### 🗺 Location: {Location} ({round(loc.latitude,5)}, {round(loc.longitude,5)})")
+    st.write(f"### 🗺 Location: {Location} \n({round(loc.latitude,5)}, {round(loc.longitude,5)})")
 
     st.write("#### 😷 Your diesel genset performance")
     col1, col2, col3 = st.columns(3, gap="small")
