@@ -157,8 +157,8 @@ if generate:
 
     # Simulate microgrid data
 
-    lifetime = 25 # yr
-    discount_rate = 0.05
+    lifetime = 15 # yr
+    discount_rate = 0.1
     timestep = 1 # h
     investment_price_pv = 600 # initial investiment price ($/kW)
     energy_rated_sto = 1000 # rated energy capacity (kWh)
